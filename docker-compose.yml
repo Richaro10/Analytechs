@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - VITE_APP_TITLE=Analytechs
+      - VITE_APP_DESCRIPTION=Solutions de Business Intelligence, Data Analytics et Conseil en Management
+      - VITE_DOMAIN=analytechs.tech
+      - VITE_STRAPI_URL=http://localhost:1337
+      - VITE_STRAPI_TOKEN=${STRAPI_TOKEN}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - ./frontend/certs:/etc/nginx/certs  # ✅ Montage des certificats
+    depends_on:
+      - backend
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    env_file: .env
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db  # ✅ Doit correspondre au nom du service PostgreSQL
+      DATABASE_NAME: ${POSTGRES_DB}  # ✅ Harmonisé avec PostgreSQL
+      DATABASE_USERNAME: ${POSTGRES_USER}  # ✅ Harmonisé
+      DATABASE_PORT: 5432
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}  # ✅ Harmonisé
+    volumes:
+      - ./backend/config:/app/config
+      - ./backend/src:/app/src
+      - ./backend/package.json:/app/package.json
+      - ./backend/yarn.lock:/app/yarn.lock
+      - ./backend/public:/app/public  # ✅ Montage du dossier public pour le garder persistant
+      - ./backend/public/uploads:/app/public/uploads  # ✅ Montage du dossier public pour le garder persistant
+   
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "sleep 5 && npm run develop"
+
+  db:
+    image: postgres:14  # ✅ Remplacé postgres:14-alpine si besoin
+    restart: always
+    env_file: .env  # ✅ Ajout explicite
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - analytechs_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+
+volumes:
+  analytechs_postgres_data:
