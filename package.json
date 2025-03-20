@@ -1,0 +1,22 @@
+{
+  "name": "analytechs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w frontend",
+    "build": "npm run build -w frontend",
+    "start": "npm run start -w frontend",
+    "backend:dev": "npm run develop -w backend",
+    "backend:start": "npm run start -w backend",
+    "backend:build": "npm run build -w backend"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

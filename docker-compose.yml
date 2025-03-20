@@ -5,6 +5,8 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_STRAPI_URL: http://localhost:1337
     ports:
       - "80:80"
       - "443:443"
@@ -17,7 +19,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - ./frontend/certs:/etc/nginx/certs  # ✅ Montage des certificats
+      - ./frontend/certs:/etc/nginx/certs
     depends_on:
       - backend
 
@@ -31,28 +33,27 @@ services:
     env_file: .env
     environment:
       DATABASE_CLIENT: postgres
-      DATABASE_HOST: db  # ✅ Doit correspondre au nom du service PostgreSQL
-      DATABASE_NAME: ${POSTGRES_DB}  # ✅ Harmonisé avec PostgreSQL
-      DATABASE_USERNAME: ${POSTGRES_USER}  # ✅ Harmonisé
+      DATABASE_HOST: db
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USERNAME: ${POSTGRES_USER}
       DATABASE_PORT: 5432
-      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}  # ✅ Harmonisé
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./backend/config:/app/config
       - ./backend/src:/app/src
       - ./backend/package.json:/app/package.json
       - ./backend/yarn.lock:/app/yarn.lock
-      - ./backend/public:/app/public  # ✅ Montage du dossier public pour le garder persistant
-      - ./backend/public/uploads:/app/public/uploads  # ✅ Montage du dossier public pour le garder persistant
-   
+      - ./backend/public:/app/public
+      - ./backend/public/uploads:/app/public/uploads
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "sleep 5 && npm run develop"
+    command: sh -c "sleep 10 && npm run develop"
 
   db:
-    image: postgres:14  # ✅ Remplacé postgres:14-alpine si besoin
+    image: postgres:14
     restart: always
-    env_file: .env  # ✅ Ajout explicite
+    env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -63,6 +64,9 @@ services:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 10s
       retries: 5
+      timeout: 5s
+    ports:
+      - "5432:5432"
 
 volumes:
   analytechs_postgres_data:

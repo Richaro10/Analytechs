@@ -3,22 +3,16 @@ module.exports = ({ env }) => ({
     config: {
       provider: 'local',
       providerOptions: {
-        localServer: {
-          folderPath: './public/uploads',  // ✅ Assure-toi que ce chemin est bien défini
-          baseUrl: '/uploads',
-        },
-      },
-      actionOptions: {
-        upload: {},
-        uploadStream: {},
-        delete: {},
+        sizeLimit: 100 * 1024 * 1024, // 100mb en bytes
       },
     },
   },
-
   'users-permissions': {
     config: {
-      jwtSecret: env('ADMIN_JWT_SECRET', 'your-secure-token-here'),
+      jwt: {
+        expiresIn: '7d',
+      },
+      jwtSecret: env('ADMIN_JWT_SECRET', 'your-secret-token'),
     },
   },
 });

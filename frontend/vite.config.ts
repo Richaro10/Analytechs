@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'; 
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
@@ -15,7 +15,16 @@ export default defineConfig({
     open: true
   },
   build: {
-    outDir: 'dist', // ✅ Assure que le build est bien dans frontend/dist
-    emptyOutDir: true, // ✅ Nettoie le dossier avant chaque build
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['lucide-react']
+        }
+      }
+    }
   }
 });

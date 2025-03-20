@@ -16,40 +16,64 @@ const iconMap: Record<string, React.ReactNode> = {
 
 const About = () => {
   const location = useLocation();
-  const { data: content, loading } = useContent<AboutSection>('about');
+  const { data: response, loading } = useContent<AboutSection>('about');
 
-  const defaultValues = [
-    {
-      icon: 'Lightbulb',
-      title: "Innovation",
-      description: "Nous explorons constamment les nouvelles technologies et méthodologies pour offrir des solutions avant-gardistes à nos clients."
-    },
-    {
-      icon: 'Target',
-      title: "Excellence",
-      description: "Chaque projet est une opportunité de démontrer notre engagement envers la qualité et la performance exceptionnelle."
-    },
-    {
-      icon: 'Users',
-      title: "Collaboration",
-      description: "Nous croyons en la force du travail d'équipe et construisons des partenariats durables avec nos clients."
-    },
-    {
-      icon: 'Shield',
-      title: "Intégrité",
-      description: "La transparence et l'éthique sont au cœur de toutes nos interactions professionnelles."
-    },
-    {
-      icon: 'Rocket',
-      title: "Agilité",
-      description: "Notre approche flexible nous permet de nous adapter rapidement aux besoins changeants du marché."
-    },
-    {
-      icon: 'Award',
-      title: "Expertise",
-      description: "Notre équipe de professionnels qualifiés garantit des solutions optimales pour chaque défi."
+  const defaultValues: AboutSection = {
+    data: {
+      id: 1,
+      attributes: {
+        vision: "Notre vision est d'être le leader en solutions data au Burkina Faso",
+        values: [
+          {
+            icon: 'Lightbulb',
+            title: "Innovation",
+            description: "Nous explorons constamment les nouvelles technologies et méthodologies pour offrir des solutions avant-gardistes à nos clients."
+          },
+          {
+            icon: 'Target',
+            title: "Excellence",
+            description: "Chaque projet est une opportunité de démontrer notre engagement envers la qualité et la performance exceptionnelle."
+          },
+          {
+            icon: 'Users',
+            title: "Collaboration",
+            description: "Nous croyons en la force du travail d'équipe et construisons des partenariats durables avec nos clients."
+          },
+          {
+            icon: 'Shield',
+            title: "Intégrité",
+            description: "La transparence et l'éthique sont au cœur de toutes nos interactions professionnelles."
+          },
+          {
+            icon: 'Rocket',
+            title: "Agilité",
+            description: "Notre approche flexible nous permet de nous adapter rapidement aux besoins changeants du marché."
+          },
+          {
+            icon: 'Award',
+            title: "Expertise",
+            description: "Notre équipe de professionnels qualifiés garantit des solutions optimales pour chaque défi."
+          }
+        ],
+        expertise: [
+          {
+            title: "Business Intelligence",
+            description: "Transformez vos données en insights actionnables pour prendre de meilleures décisions stratégiques."
+          },
+          {
+            title: "Data Analytics",
+            description: "Exploitez la puissance de vos données avec des analyses avancées et du machine learning."
+          },
+          {
+            title: "Conseil en Management",
+            description: "Optimisez votre stratégie d'entreprise avec nos conseils experts et notre accompagnement personnalisé."
+          }
+        ]
+      }
     }
-  ];
+  };
+
+  const content = response || defaultValues;
 
   if (loading) {
     return (
@@ -78,7 +102,7 @@ const About = () => {
       <PageBanner
         title="À propos d'Analytechs"
         subtitle="Découvrez notre vision et nos valeurs pour la transformation digitale"
-        badge="Notre Histoire"
+        badge="Notre Vision & Expertise"
         backgroundImage="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
       />
 
@@ -87,7 +111,7 @@ const About = () => {
         <div className="mb-20">
           <span className="text-accent font-semibold text-sm uppercase tracking-wider">Notre Vision</span>
           <h2 className="text-3xl md:text-5xl font-bold text-primary mt-4 mb-8">
-            Façonner l'avenir numérique des entreprises
+            {content.data.attributes.vision}
           </h2>
           <div className="bg-white p-8 rounded-2xl text-gray-600 shadow-xl border border-gray-100">
             <div className="space-y-6">
@@ -132,7 +156,7 @@ const About = () => {
             Ce qui nous définit
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(content?.values || defaultValues).map((value, index) => (
+            {content.data.attributes.values.map((value, index) => (
               <div 
                 key={index}
                 className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden"
@@ -157,20 +181,7 @@ const About = () => {
             Une expertise reconnue
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(content?.expertise || [
-              {
-                title: "Business Intelligence",
-                description: "Transformez vos données en insights actionnables pour prendre de meilleures décisions stratégiques."
-              },
-              {
-                title: "Data Analytics",
-                description: "Exploitez la puissance de vos données avec des analyses avancées et du machine learning."
-              },
-              {
-                title: "Conseil en Management",
-                description: "Optimisez votre stratégie d'entreprise avec nos conseils experts et notre accompagnement personnalisé."
-              }
-            ]).map((expertise, index) => (
+            {content.data.attributes.expertise.map((expertise, index) => (
               <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 group h-full flex flex-col">
                 <div className="flex flex-col h-full">
                   <div className="bg-accent/5 p-4 rounded-2xl inline-block transform transition-transform duration-300 group-hover:scale-110 mb-6">

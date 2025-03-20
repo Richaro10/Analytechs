@@ -1,4 +1,4 @@
-# 🚀 Analytechs
+# 🚀 Analytechs Burkina Faso
 
 ![Analytechs](https://img.shields.io/badge/Analytechs-Data%20%26%20Dev%20%26%20Management-blue)
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
@@ -8,7 +8,7 @@
 ![TypeScript](https://img.shields.io/badge/typescript-%5E5.3.3-blue)
 ![Strapi](https://img.shields.io/badge/strapi-4.20.1-blueviolet)
 
-Solutions de Business Intelligence, Data Analytics et Conseil en Management.
+Solutions innovantes de Business Intelligence, Data Analytics et Conseil en Management au Burkina Faso.
 
 ## 📋 Table des matières
 
@@ -19,7 +19,6 @@ Solutions de Business Intelligence, Data Analytics et Conseil en Management.
 - [Configuration](#-configuration)
 - [Développement](#-développement)
 - [Déploiement](#-déploiement)
-- [Tests](#-tests)
 - [Sécurité](#-sécurité)
 - [Contribution](#-contribution)
 - [Licence](#-licence)
@@ -56,10 +55,10 @@ Analytechs est une plateforme complète offrant des solutions de Business Intell
 - Node.js
 
 ### Infrastructure
-- Docker
+- Docker & Docker Compose
 - Nginx
 - Let's Encrypt
-- GitHub Actions
+- PostgreSQL
 
 ## 🏗 Architecture
 
@@ -69,33 +68,11 @@ analytechs/
 │   ├── Dockerfile           # Configuration Docker frontend
 │   ├── nginx.conf           # Configuration Nginx
 │   ├── src/                 # Code source React
-│   │   ├── assets/         # Ressources statiques
-│   │   ├── components/     # Composants React réutilisables
-│   │   ├── hooks/         # Hooks personnalisés
-│   │   ├── lib/           # Utilitaires et configurations
-│   │   ├── pages/         # Pages de l'application
-│   │   └── types/         # Types TypeScript
-│   ├── index.html          # Point d'entrée HTML
-│   ├── package.json        # Dépendances frontend
-│   ├── tailwind.config.js  # Configuration Tailwind
-│   ├── tsconfig.json       # Configuration TypeScript
-│   └── vite.config.ts      # Configuration Vite
-│
+│   └── ...
 ├── backend/                 # API Strapi
 │   ├── Dockerfile          # Configuration Docker backend
 │   ├── config/            # Configuration Strapi
-│   │   ├── admin.js       # Configuration admin
-│   │   ├── database.js    # Configuration base de données
-│   │   ├── middlewares.js # Middlewares
-│   │   ├── plugins.js     # Plugins
-│   │   └── server.js      # Configuration serveur
-│   ├── src/               # Code source API
-│   │   ├── api/          # Points d'entrée API
-│   │   ├── middlewares/  # Middlewares personnalisés
-│   │   ├── policies/     # Politiques de sécurité
-│   │   └── utils/        # Utilitaires
-│   └── package.json       # Dépendances backend
-│
+│   └── ...
 ├── docker-compose.yml       # Configuration Docker Compose
 ├── deploy.sh               # Script de déploiement
 ├── .env.example            # Example de variables d'environnement
@@ -106,11 +83,11 @@ analytechs/
 
 ### Prérequis
 
-- Node.js >= 18.0.0
 - Docker et Docker Compose
+- Node.js >= 18.0.0 (pour le développement local)
 - Git
 
-### Installation locale
+### Installation avec Docker (Recommandé)
 
 1. Cloner le dépôt
 ```bash
@@ -124,17 +101,17 @@ cp .env.example .env
 # Éditer .env avec vos valeurs
 ```
 
-3. Lancer l'application avec Docker
+3. Lancer avec Docker Compose
 ```bash
 docker-compose up -d
 ```
 
 L'application sera disponible sur :
-- Frontend : http://localhost:3000
+- Frontend : http://localhost
 - Backend : http://localhost:1337
 - Admin Strapi : http://localhost:1337/admin
 
-### Installation manuelle (développement)
+### Installation locale (Développement)
 
 1. Frontend
 ```bash
@@ -161,6 +138,11 @@ VITE_APP_DESCRIPTION=Solutions de Business Intelligence
 VITE_DOMAIN=analytechs.tech
 VITE_STRAPI_URL=http://localhost:1337
 VITE_STRAPI_TOKEN=your_token
+
+# EmailJS Configuration
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
 ```
 
 #### Backend (.env)
@@ -171,72 +153,72 @@ APP_KEYS=your-app-keys
 API_TOKEN_SALT=your-salt
 ADMIN_JWT_SECRET=your-secret
 DATABASE_CLIENT=postgres
-DATABASE_HOST=localhost
+DATABASE_HOST=db
 DATABASE_PORT=5432
 DATABASE_NAME=analytechs
-DATABASE_USERNAME=user
-DATABASE_PASSWORD=password
+DATABASE_USERNAME=analytechs_user
+DATABASE_PASSWORD=your_password
 ```
 
-## 💻 Développement
+## 🖥 Déploiement
 
-### Scripts disponibles
+### Déploiement sur VPS
 
-Frontend :
+1. Prérequis serveur
 ```bash
-npm run dev        # Démarre le serveur de développement
-npm run build      # Build pour la production
-npm run preview    # Prévisualise le build
-npm run lint       # Vérifie le code
+# Mise à jour du système
+sudo apt update && sudo apt upgrade -y
+
+# Installation de Docker et Docker Compose
+sudo apt install -y docker.io docker-compose
+
+# Ajout de l'utilisateur au groupe docker
+sudo usermod -aG docker $USER
 ```
 
-Backend :
+2. Configuration Nginx et SSL
 ```bash
-npm run develop    # Mode développement
-npm run start      # Mode production
-npm run build      # Build pour la production
+# Installation de Nginx et Certbot
+sudo apt install -y nginx certbot python3-certbot-nginx
+
+# Obtention des certificats SSL
+sudo certbot --nginx -d votredomaine.com
 ```
 
-### Conventions de code
-
-- ESLint pour le linting
-- Prettier pour le formatage
-- Conventional Commits pour les messages de commit
-- TypeScript strict mode
-
-## 📦 Déploiement
-
-### Production
-
-1. Construire les images
+3. Déploiement avec le script
 ```bash
-docker-compose -f docker-compose.prod.yml build
-```
+# Rendre le script exécutable
+chmod +x deploy.sh
 
-2. Déployer
-```bash
+# Lancer le déploiement
 ./deploy.sh
 ```
 
-### CI/CD
+### Configuration Nginx
 
-Le projet utilise GitHub Actions pour :
-- Tests automatisés
-- Builds de production
-- Déploiement automatique
-- Vérification de la qualité du code
+Le fichier `nginx.conf` est déjà configuré pour :
+- Redirection HTTP vers HTTPS
+- Gestion des certificats SSL
+- Proxy vers les services Docker
+- Compression Gzip
+- Cache des assets statiques
+- Headers de sécurité
 
-## 🧪 Tests
+### Surveillance et maintenance
 
-### Frontend
 ```bash
-npm test          # Lance les tests
-npm run coverage  # Rapport de couverture
-```
+# Voir les logs des conteneurs
+docker-compose logs -f
 
-### Backend
-```bash
-npm run test      # Lance les tests
+# Redémarrer les services
+docker-compose restart
+
+# Mise à jour des conteneurs
+docker-compose pull
+docker-compose up -d
+
+# Sauvegarder la base de données
+docker-compose exec db pg_dump -U analytechs_user analytechs > backup.sql
 ```
 
 ## 🔒 Sécurité
@@ -263,14 +245,6 @@ Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
 
 ## 📧 Contact
 
-Analytechs - contact@analytechs.tech
+Analytechs Burkina Faso - contact@analytechs.tech
 
 Site web : [https://analytechs.tech](https://analytechs.tech)
-
-## 🙏 Remerciements
-
-- [React](https://reactjs.org/)
-- [Strapi](https://strapi.io/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Vite](https://vitejs.dev/)
-- [Docker](https://www.docker.com/)

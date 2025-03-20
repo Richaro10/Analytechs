@@ -6,44 +6,67 @@ export interface Hero {
 }
 
 export interface Service {
-  title: string;
-  description: string;
-  icon: string;
-  features: string[];
+  id: number;
+  attributes: {
+    icon: string;
+    title: string;
+    description: string;
+    features: string[];
+    benefits: string[];
+    order: number;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface BlogPost {
   id: number;
-  slug: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  author: string;
-  date: string;
-  image: {
-    url: string;
+  attributes: {
+    slug: string;
+    title: string;
+    content: string;
+    excerpt: string;
+    author: string;
+    publishedAt: string;
+    createdAt: string;
+    updatedAt: string;
+    image: {
+      data: {
+        attributes: {
+          url: string;
+          alternativeText?: string;
+        };
+      };
+    };
   };
 }
 
 export interface AboutSection {
-  vision: string;
-  values: Array<{
-    title: string;
-    description: string;
-    icon: string;
-  }>;
-  expertise: Array<{
-    title: string;
-    description: string;
-  }>;
+  data: {
+    id: number;
+    attributes: {
+      vision: string;
+      values: Array<{
+        icon: string;
+        title: string;
+        description: string;
+      }>;
+      expertise: Array<{
+        title: string;
+        description: string;
+      }>;
+    };
+  };
 }
 
-export interface ContactInfo {
-  email: string;
-  phone: string;
-  address: string;
-  socialLinks: {
-    linkedin?: string;
-    twitter?: string;
+export interface ApiResponse<T> {
+  data: T;
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
   };
 }

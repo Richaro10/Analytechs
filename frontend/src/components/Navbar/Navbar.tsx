@@ -9,6 +9,9 @@ const Navbar = () => {
   const location = useLocation();
 
   const isActivePage = (path: string) => {
+    if (path === '/blog') {
+      return location.pathname === '/blog' || location.pathname.startsWith('/blog/');
+    }
     return location.pathname === path;
   };
 
@@ -23,50 +26,50 @@ const Navbar = () => {
             <div className="hidden md:ml-8 md:flex md:space-x-8">
               <Link 
                 to="/" 
-                className={`px-4 py-2 rounded-md text-base font-extrabold tracking-wide transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm uppercase font-bold tracking-wider transition-all duration-300 ${
                   isActivePage('/') 
-                    ? 'text-accent' 
-                    : 'text-gray-700 hover:text-accent'
+                    ? 'text-accent scale-105 border-b-2 border-accent' 
+                    : 'text-gray-700 hover:text-accent hover:scale-105'
                 }`}
               >
                 Accueil
               </Link>
               <Link 
                 to="/about" 
-                className={`px-4 py-2 rounded-md text-base font-extrabold tracking-wide transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm uppercase font-bold tracking-wider transition-all duration-300 ${
                   isActivePage('/about') 
-                    ? 'text-accent' 
-                    : 'text-gray-700 hover:text-accent'
+                    ? 'text-accent scale-105 border-b-2 border-accent' 
+                    : 'text-gray-700 hover:text-accent hover:scale-105'
                 }`}
               >
                 À propos
               </Link>
               <Link 
                 to="/services" 
-                className={`px-4 py-2 rounded-md text-base font-extrabold tracking-wide transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm uppercase font-bold tracking-wider transition-all duration-300 ${
                   isActivePage('/services') 
-                    ? 'text-accent' 
-                    : 'text-gray-700 hover:text-accent'
+                    ? 'text-accent scale-105 border-b-2 border-accent' 
+                    : 'text-gray-700 hover:text-accent hover:scale-105'
                 }`}
               >
                 Services
               </Link>
               <Link 
                 to="/blog" 
-                className={`px-4 py-2 rounded-md text-base font-extrabold tracking-wide transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm uppercase font-bold tracking-wider transition-all duration-300 ${
                   isActivePage('/blog') 
-                    ? 'text-accent' 
-                    : 'text-gray-700 hover:text-accent'
+                    ? 'text-accent scale-105 border-b-2 border-accent' 
+                    : 'text-gray-700 hover:text-accent hover:scale-105'
                 }`}
               >
                 Blog
               </Link>
               <Link 
                 to="/contact" 
-                className={`px-4 py-2 rounded-md text-base font-extrabold tracking-wide transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm uppercase font-bold tracking-wider transition-all duration-300 ${
                   isActivePage('/contact') 
-                    ? 'text-accent' 
-                    : 'text-gray-700 hover:text-accent'
+                    ? 'text-accent scale-105 border-b-2 border-accent' 
+                    : 'text-gray-700 hover:text-accent hover:scale-105'
                 }`}
               >
                 Contact
@@ -117,51 +120,51 @@ const Navbar = () => {
             
             <Link 
               to="/" 
-              className={`block px-4 py-2 rounded-md text-lg font-extrabold tracking-wide ${
+              className={`block px-4 py-3 rounded-md text-sm uppercase font-bold tracking-wider ${
                 isActivePage('/') 
-                  ? 'text-accent bg-accent/10' 
-                  : 'text-gray-700 hover:text-accent hover:bg-gray-50'
-              } transition-colors`}
+                  ? 'text-accent bg-accent/10 scale-105' 
+                  : 'text-gray-700 hover:text-accent hover:bg-gray-50 hover:scale-105'
+              } transition-all duration-300`}
             >
               Accueil
             </Link>
             <Link 
               to="/about" 
-              className={`block px-4 py-2 rounded-md text-lg font-extrabold tracking-wide ${
+              className={`block px-4 py-3 rounded-md text-sm uppercase font-bold tracking-wider ${
                 isActivePage('/about') 
-                  ? 'text-accent bg-accent/10' 
-                  : 'text-gray-700 hover:text-accent hover:bg-gray-50'
-              } transition-colors`}
+                  ? 'text-accent bg-accent/10 scale-105' 
+                  : 'text-gray-700 hover:text-accent hover:bg-gray-50 hover:scale-105'
+              } transition-all duration-300`}
             >
               À propos
             </Link>
             <Link 
               to="/services" 
-              className={`block px-4 py-2 rounded-md text-lg font-extrabold tracking-wide ${
+              className={`block px-4 py-3 rounded-md text-sm uppercase font-bold tracking-wider ${
                 isActivePage('/services') 
-                  ? 'text-accent bg-accent/10' 
-                  : 'text-gray-700 hover:text-accent hover:bg-gray-50'
-              } transition-colors`}
+                  ? 'text-accent bg-accent/10 scale-105' 
+                  : 'text-gray-700 hover:text-accent hover:bg-gray-50 hover:scale-105'
+              } transition-all duration-300`}
             >
               Services
             </Link>
             <Link 
               to="/blog" 
-              className={`block px-4 py-2 rounded-md text-lg font-extrabold tracking-wide ${
+              className={`block px-4 py-3 rounded-md text-sm uppercase font-bold tracking-wider ${
                 isActivePage('/blog') 
-                  ? 'text-accent bg-accent/10' 
-                  : 'text-gray-700 hover:text-accent hover:bg-gray-50'
-              } transition-colors`}
+                  ? 'text-accent bg-accent/10 scale-105' 
+                  : 'text-gray-700 hover:text-accent hover:bg-gray-50 hover:scale-105'
+              } transition-all duration-300`}
             >
               Blog
             </Link>
             <Link 
               to="/contact" 
-              className={`block px-4 py-2 rounded-md text-lg font-extrabold tracking-wide ${
+              className={`block px-4 py-3 rounded-md text-sm uppercase font-bold tracking-wider ${
                 isActivePage('/contact') 
-                  ? 'text-accent bg-accent/10' 
-                  : 'text-gray-700 hover:text-accent hover:bg-gray-50'
-              } transition-colors`}
+                  ? 'text-accent bg-accent/10 scale-105' 
+                  : 'text-gray-700 hover:text-accent hover:bg-gray-50 hover:scale-105'
+              } transition-all duration-300`}
             >
               Contact
             </Link>
