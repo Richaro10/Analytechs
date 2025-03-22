@@ -1,135 +1,115 @@
-import React from 'react';
-import { Calendar, User, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { useContent } from '../hooks/useContent';
 import type { BlogPost } from '../types/content';
 import PageBanner from '../components/PageBanner';
+import { Seo } from '../components/Seo';
+import { defaultMeta } from '../components/Seo';
+import Pagination from '../components/Pagination';
+import ArticleCard from '../components/ArticleCard';
+import Filters from '../components/Filters';
 
 const Blog = () => {
-  const { data: response, loading, error } = useContent<{ data: BlogPost[] }>('articles');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const query = searchParams.get('q') || '';
+  const tagFilter = searchParams.get('tag') || '';
 
-  console.log("🔥 API response:", response);
+  const limit = 6;
+  const start = (page - 1) * limit;
 
-  const defaultPosts: BlogPost[] = [
-    {
-      id: 1,
-      attributes: {
-        slug: 'importance-business-intelligence',
-        title: "L'importance de la Business Intelligence dans la prise de décision",
-        excerpt: "Découvrez comment la BI peut transformer votre processus de prise de décision et améliorer la performance de votre entreprise.",
-        author: "Marie Dubois",
-        publishedAt: "2024-03-15T00:00:00.000Z",
-        createdAt: "2024-03-15T00:00:00.000Z",
-        updatedAt: "2024-03-15T00:00:00.000Z",
-        content: "",
-        image: {
-          data: {
-            attributes: {
-              url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2015&q=80"
-            }
-          }
-        }
-      }
-    }
-  ];
+  const [searchInput, setSearchInput] = useState(query);
 
-  // ✅ Typage explicite = TS est content
-  const posts: BlogPost[] = Array.isArray(response) ? response : response?.data || defaultPosts;
+  const { data: tagsData } = useContent<{ data: { id: number; attributes: { name: string } }[] }>('tags');
+  const availableTags = tagsData?.data || [];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
-        <PageBanner
-          title="Blog"
-          subtitle="Découvrez nos derniers articles sur la data, la BI et la stratégie d'entreprise"
-          backgroundImage="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-6">
-                  <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filters: any = {};
+  if (query) filters.title = { $containsi: query };
+  if (tagFilter) filters.tags = { name: { $eq: tagFilter } };
+  filters.publishedAt = { $notNull: true };
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white">
-        <PageBanner
-          title="Blog"
-          subtitle="Une erreur est survenue lors du chargement des articles"
-          backgroundImage="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center text-gray-600">
-            <p>Erreur de chargement des articles. Veuillez réessayer plus tard.</p>
-            <p className="mt-2 text-sm text-gray-500">{error.message}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { data: response, meta, loading, error } = useContent<{ data: BlogPost[] }>('articles', undefined, {
+    pagination: { start, limit },
+    populate: '*',
+    sort: ['publishedAt:desc'],
+    filters
+  });
+
+  const posts: BlogPost[] = Array.isArray(response) ? response : response?.data || [];
+  const totalPosts = meta?.pagination?.total || posts.length;
+  const totalPages = Math.ceil(totalPosts / limit);
+
+  const prevUrl = page > 1 ? `${defaultMeta.url}/blog?page=${page - 1}` : null;
+  const nextUrl = page < totalPages ? `${defaultMeta.url}/blog?page=${page + 1}` : null;
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('q', searchInput);
+    newParams.set('page', '1');
+    navigate(`/blog?${newParams.toString()}`);
+  };
+
+  const handleTagClick = (tag: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tag', tag);
+    newParams.set('page', '1');
+    navigate(`/blog?${newParams.toString()}`);
+  };
+  
+  const seoLinks: { rel: string; href: string }[] = [prevUrl && { rel: 'prev', href: prevUrl }, nextUrl && { rel: 'next', href: nextUrl }].filter(Boolean) as { rel: string; href: string }[];
+
 
   return (
     <div className="min-h-screen bg-white">
+      <Seo
+        title={`Blog - Page ${page} - ${defaultMeta.siteName}`}
+        description="Explorez nos articles sur la data, la Business Intelligence et le conseil stratégique au Burkina Faso."
+        url={`${defaultMeta.url}${location.pathname}?page=${page}${query ? `&q=${query}` : ''}${tagFilter ? `&tag=${tagFilter}` : ''}`}
+        image={defaultMeta.image}
+        links={seoLinks} 
+      />
+
       <PageBanner
         title="Blog"
         subtitle="Découvrez nos derniers articles sur la data, la BI et la stratégie d'entreprise"
-        backgroundImage="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+        backgroundImage="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?auto=format&fit=crop&w=2070&q=80"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <form onSubmit={handleSearch} className="mb-10 flex items-center max-w-md mx-auto">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Rechercher un article..."
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-accent focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="bg-accent text-white px-5 py-3 rounded-r-xl hover:bg-primary flex items-center gap-2"
+          >
+            <Search className="h-5 w-5" /> Rechercher
+          </button>
+        </form>
+
+        <Filters availableTags={availableTags} tagFilter={tagFilter} onTagClick={handleTagClick} />
+
+        {loading && <p className="text-center text-gray-600">Chargement des articles...</p>}
+        {error && <p className="text-center text-red-500">Erreur : {error.message}</p>}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post: BlogPost) => (
-            <article
-              key={post.id}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group border border-gray-100"
-            >
-              <Link to={`/blog/${post.attributes.slug}`} className="block">
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={post.attributes.image?.data?.attributes?.url}
-                    alt={post.attributes.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold text-neutral mb-3 group-hover:text-accent transition-colors line-clamp-2">
-                    {post.attributes.title}
-                  </h2>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
-                    {post.attributes.excerpt}
-                  </p>
-                  <div className="flex items-center text-sm text-gray-500 space-x-4">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-1" />
-                      {post.attributes.author}
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {new Date(post.attributes.publishedAt).toLocaleDateString('fr-FR')}
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center text-accent group-hover:text-primary transition-colors">
-                    Lire l'article
-                    <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-2 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-            </article>
-          ))}
+          {posts.length > 0 ? (
+            posts.map((post) => <ArticleCard key={post.id} post={post} />)
+          ) : (
+            <p className="text-center text-gray-600 col-span-full">Aucun article trouvé.</p>
+          )}
         </div>
+
+        <Pagination currentPage={page} totalPages={totalPages} basePath="/blog" />
       </div>
     </div>
   );

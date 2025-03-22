@@ -117,6 +117,7 @@ const Clients = () => {
                   <img 
                     src={project.logo} 
                     alt={`Logo ${project.company}`}
+                    loading="lazy" 
                     className="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-300"
                   />
                 </div>

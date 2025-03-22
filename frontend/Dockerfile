@@ -35,7 +35,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy SSL certificates into the container
-COPY certs /etc/nginx/certs
+COPY certs /etc/letsencrypt/live/analytechs.tech
 
 # Expose ports
 EXPOSE 80 443

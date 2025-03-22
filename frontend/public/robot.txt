@@ -1,0 +1,21 @@
+# robots.txt – Fichier pour les moteurs de recherche
+# 📍 Ce fichier indique ce que les robots d’indexation (Googlebot, Bingbot…) peuvent explorer ou non sur votre site
+
+# 👉 Autoriser tous les robots à tout explorer
+User-agent: *
+Allow: /
+
+# 👉 Spécification du sitemap dynamique généré via Strapi
+Sitemap: https://analytechs.tech/api/sitemap.xml
+
+# 👉 Ajout du flux RSS (utile pour Google News & agrégateurs)
+# (💡 ce n’est pas une directive officielle, mais reconnu par certains services)
+RSS: https://analytechs.tech/api/rss.xml
+
+# 💡 Autres directives possibles (optionnelles) :
+# Disallow: /admin/
+# Disallow: /private/
+# Crawl-delay: 10
+
+# 📌 Si tu souhaites interdire certaines zones du site à l’indexation :
+# Disallow: /api/ (évite d’indexer les routes techniques Strapi)

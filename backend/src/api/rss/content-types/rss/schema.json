@@ -1,0 +1,19 @@
+{
+    "kind": "collectionType",
+    "collectionName": "rss",
+    "info": {
+      "singularName": "rss",
+      "pluralName": "rsss",
+      "displayName": "RSS",
+      "description": "Content type for RSS feed endpoint"
+    },
+    "options": {},
+    "pluginOptions": {},
+    "attributes": {
+      "title": {
+        "type": "string",
+        "required": true
+      }
+    }
+  }
+  

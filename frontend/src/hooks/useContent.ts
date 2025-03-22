@@ -1,8 +1,21 @@
 import { useState, useEffect } from 'react';
 import strapiClient from '../lib/strapi';
 
+interface StrapiResponseWithMeta<T> {
+  data: T;
+  meta: {
+    pagination: {
+      total: number;
+      page: number;
+      pageSize: number;
+      pageCount: number;
+    };
+  };
+}
+
 export function useContent<T>(contentType: string, id?: string, params: Record<string, unknown> = {}) {
   const [data, setData] = useState<T | null>(null);
+  const [meta, setMeta] = useState<StrapiResponseWithMeta<T>['meta'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -16,14 +29,14 @@ export function useContent<T>(contentType: string, id?: string, params: Record<s
         setError(null);
 
         const endpoint = id ? `/${contentType}/${id}` : `/${contentType}`;
-        const response = await strapiClient.get(endpoint, {
+        const response = await strapiClient.get<StrapiResponseWithMeta<T>>(endpoint, {
           signal: controller.signal,
           params: { populate: '*', ...params }
         });
 
         if (isMounted) {
-          // ❗ On envoie directement response.data.data, car Strapi l'encapsule dans `data`
           setData(response.data.data);
+          setMeta(response.data.meta || null);
         }
       } catch (err: any) {
         if (isMounted) {
@@ -43,5 +56,5 @@ export function useContent<T>(contentType: string, id?: string, params: Record<s
     };
   }, [contentType, id, JSON.stringify(params)]);
 
-  return { data, loading, error };
+  return { data, meta, loading, error };
 }

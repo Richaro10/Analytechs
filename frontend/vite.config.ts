@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import compression from 'vite-plugin-compression';
 import { resolve } from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    compression({ algorithm: 'gzip' }) // ✅ Compression gzip à la génération
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
@@ -17,7 +21,8 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false, // ✅ Désactivé en prod pour allègement
+    minify: 'esbuild', // ✅ Minification explicite
     rollupOptions: {
       output: {
         manualChunks: {
